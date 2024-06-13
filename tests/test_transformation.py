@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from image_transformation.utils.transformation_utils import (
+from data_transformation.utils.transformation_utils import (
     show_image,
     save_image,
     Transformation,
@@ -151,28 +151,28 @@ def mock_disease_mask():
 @pytest.fixture
 def mock_pcv():
     with patch(
-            'image_transformation.utils.transformation_utils.pcv') as mock_pcv:
+            'data_transformation.utils.transformation_utils.pcv') as mock_pcv:
         yield mock_pcv
 
 
 @pytest.fixture
 def mock_os():
     with patch(
-            'image_transformation.utils.transformation_utils.os') as mock_os:
+            'data_transformation.utils.transformation_utils.os') as mock_os:
         yield mock_os
 
 
 @pytest.fixture
 def mock_cv2():
     with patch(
-            'image_transformation.utils.transformation_utils.cv2') as mock_cv2:
+            'data_transformation.utils.transformation_utils.cv2') as mock_cv2:
         yield mock_cv2
 
 
 @pytest.fixture
 def mock_plt():
     with patch(
-            'image_transformation.utils.transformation_utils.plt') as mock_plt:
+            'data_transformation.utils.transformation_utils.plt') as mock_plt:
         yield mock_plt
 
 

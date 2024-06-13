@@ -6,7 +6,7 @@ import sys
 import cv2
 from tqdm import tqdm
 
-from utils.augmentation_utils import (
+from data_augmentation.utils.augmentation_utils import (
     flip_image,
     rotate_image,
     random_skew,
@@ -116,7 +116,7 @@ def balance_dataset(input_directory, output_directory):
             for file in files:
                 if num_images >= max_images:
                     break
-                if file.lower().endswith(IMAGE_EXTENSIONS):
+                if file.casefold().endswith(IMAGE_EXTENSIONS):
                     image_path = os.path.join(subdir, file)
                     augmented_images = perform_augmentation(
                         image_path, input_directory, output_directory
@@ -126,21 +126,21 @@ def balance_dataset(input_directory, output_directory):
         progress_bar.close()
 
 
-def main():
-    if len(sys.argv) != 2:
+def augmentation(input_directory: str = None) -> None:
+    if len(sys.argv) != 2 and input_directory is None:
         print("Usage: python Augmentation.py <directory>")
         sys.exit(1)
 
-    directory = sys.argv[1]
+    directory = sys.argv[1] if input_directory is None else input_directory
     if not os.path.isdir(directory):
         print("The provided path is not a directory.")
         sys.exit(1)
 
-    augmented_dir = "data/augmented_directory"
+    augmented_dir = f"{directory}_augmented"
     os.makedirs(augmented_dir, exist_ok=True)
 
     balance_dataset(directory, augmented_dir)
 
 
 if __name__ == "__main__":
-    main()
+    augmentation()

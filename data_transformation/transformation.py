@@ -4,7 +4,7 @@ from typing import Union
 
 import click
 
-from image_transformation.utils.transformation_utils import Transformation
+from data_transformation.utils.transformation_utils import Transformation
 
 
 def validate_source(ctx: click.Context,
@@ -57,24 +57,24 @@ def validate_directory(ctx: click.Context, param: click.Parameter,
     return value
 
 
-@click.command()
-@click.option('--src', required=True,
-              help='Source image or directory', callback=validate_source)
-@click.option('--dst',
-              help='Destination directory', callback=validate_directory)
-def transformation(src: str, dst: Union[str, None]) -> None:
+def transformation(
+        src: str, dst: str | None, keep_dir_structure: bool) -> None:
     """
      Perform the transformation based on the source and destination.
 
      Args:
          src (str): The source image or directory.
          dst (Union[str, None]): The destination directory.
+         keep_dir_structure (bool): Whether to keep the directory structure.
 
      Raises:
-         click.UsageError: If the source is a directory and the destination is not provided.
+         click.UsageError: If the source is a directory
+            and the destination is not provided.
      """
     if os.path.isfile(src):
-        click.echo(f'Source file is a valid .jpg image: {src}')
+        if dst:
+            raise click.UsageError(
+                'If --src is a file, --dst must not be specified.')
         Transformation(image_path=src)
         sys.exit(0)
 
@@ -83,9 +83,9 @@ def transformation(src: str, dst: Union[str, None]) -> None:
             raise click.UsageError(
                 'If --src is a directory,'
                 '--dst must also be specified and must be a directory.')
-        click.echo(f'Source directory: {src}')
-        click.echo(f'Destination directory: {dst}')
-        Transformation(input_dir=src, output_dir=dst)
+        Transformation(
+            input_dir=src, output_dir=dst,
+            keep_dir_structure=keep_dir_structure)
         sys.exit(0)
 
     else:
@@ -93,5 +93,16 @@ def transformation(src: str, dst: Union[str, None]) -> None:
             'Invalid source. Must be either a .jpg image or a directory.')
 
 
+@click.command()
+@click.option('--src', required=True,
+              help='Source image or directory', callback=validate_source)
+@click.option('--dst',
+              help='Destination directory', callback=validate_directory)
+def cli_transformation(src: str, dst: str | None) -> None:
+    transformation(src, dst)
+
+
 if __name__ == '__main__':
-    transformation()
+    src_dir = '../leaves'
+    dst_dir = '../leaves_augmented'
+    transformation(src=src_dir, dst=dst_dir)

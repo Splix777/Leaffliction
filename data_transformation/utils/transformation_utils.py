@@ -4,6 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from plantcv import plantcv as pcv
+from tqdm import tqdm
 
 CV_COLORS = {
     "rgb": cv2.COLOR_BGR2RGB,
@@ -44,7 +45,7 @@ def show_image(image: np.ndarray, title: str = "", color: str = "rgb"):
     plt.show()
 
 
-def save_image(image: np.ndarray, output_path: str):
+def save_image(image: np.ndarray, output_path: str = None):
     """
     Save the image to a specified output path as a .jpg file.
 
@@ -61,7 +62,25 @@ def save_image(image: np.ndarray, output_path: str):
     """
     if not output_path.endswith(".jpg"):
         raise ValueError("Output path must be a .jpg file")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     cv2.imwrite(output_path, image)
+
+
+def count_image(directory: str) -> int:
+    """
+    Count the number of images in each category within the
+    specified directory.
+
+    Args:
+        directory (str): The directory containing the images.
+
+    Returns:
+        int: The total number of images in the directory.
+    """
+    return sum(
+        len([file for file in files if file.casefold().endswith("jpg")])
+        for subdir, _, files in os.walk(directory)
+    )
 
 
 class Transformation:
@@ -80,34 +99,6 @@ class Transformation:
     Returns:
         None
     """
-    def __init__(self, image_path: str = None, input_dir: str = None,
-                 output_dir: str = None) -> None:
-        # Intermediate images
-        self.gray_image = None
-        self.refined_mask = None
-        self.final_masked_image = None
-        self.combined_mask = None
-        self.disease_mask = None
-        # Final images
-        self.image = None
-        self.gaussian_blur = None
-        self.diseased_image = None
-        self.boundary_image_h = None
-        self.shape_image = None
-        self.image_with_landmarks = None
-        # Image paths
-        self.image_path = image_path
-        self.image_name = None
-        self.input_dir = input_dir
-        self.output_dir = output_dir
-        # Apply transformations
-        if input_dir is not None and output_dir is not None:
-            self.apply_transformation_from_file()
-        elif image_path is not None:
-            self.load_image(image_path)
-            self.run_workflow()
-
-
     @staticmethod
     def calculate_roi(image: np.ndarray) -> tuple[int, int, int, int]:
         """
@@ -150,6 +141,35 @@ class Transformation:
 
         return x, y, roi_width, roi_height
 
+    def __init__(self, image_path: str = None, input_dir: str = None,
+                 output_dir: str = None, keep_dir_structure: bool = False
+                 ) -> None:
+        # Intermediate images
+        self.gray_image = None
+        self.refined_mask = None
+        self.final_masked_image = None
+        self.combined_mask = None
+        self.disease_mask = None
+        # Final images
+        self.image = None
+        self.gaussian_blur = None
+        self.diseased_image = None
+        self.boundary_image_h = None
+        self.shape_image = None
+        self.image_with_landmarks = None
+        # Image paths
+        self.image_name = None
+        self.image_path = image_path
+        self.input_dir = input_dir
+        self.output_dir = output_dir
+        self.keep_dir_structure = keep_dir_structure
+        # Apply transformations
+        if input_dir is not None and output_dir is not None:
+            self.apply_transformation_from_file()
+        elif image_path is not None:
+            self.load_image(image_path)
+            self.run_workflow()
+
     def load_image(self, image_path: str) -> None:
         """
         Load an image from the specified image path and process it.
@@ -170,12 +190,13 @@ class Transformation:
         try:
             self.image, _, _ = pcv.readimage(image_path)
             self.image_name = os.path.basename(image_path).split(".")[0]
+            self.image_path = image_path
 
-            if self.output_dir is not None:
+            if self.output_dir is not None and not self.keep_dir_structure:
                 save_image(self.image, os.path.join(
                     self.output_dir,
                     f"{self.image_name}_original.jpg"))
-            else:
+            elif self.output_dir is None:
                 show_image(self.image, title="Original Image", color="rgb")
 
         except Exception as e:
@@ -263,13 +284,13 @@ class Transformation:
             raise RuntimeError(
                 "Failed to apply Gaussian blur: {e}") from e
 
-        if self.output_dir is not None:
+        if self.output_dir is not None and not self.keep_dir_structure:
             save_image(
                 self.gaussian_blur,
                 os.path.join(
                     self.output_dir,
                     f"{self.image_name}_gaussian_blur.jpg"))
-        else:
+        elif self.output_dir is None:
             show_image(self.gaussian_blur, title="Gaussian Blur", color="gray")
 
     def _create_masks(self) -> None:
@@ -380,13 +401,13 @@ class Transformation:
             img=masked_image, mask=self.refined_mask, mask_color="white"
         )
 
-        if self.output_dir is not None:
+        if self.output_dir is not None and not self.keep_dir_structure:
             save_image(
                 self.diseased_image,
                 os.path.join(
                     self.output_dir,
                     f"{self.image_name}_diseased.jpg"))
-        else:
+        elif self.output_dir is None:
             show_image(
                 self.diseased_image,
                 title="Cropped Diseased Image",
@@ -425,7 +446,8 @@ class Transformation:
                 mask=disease_mask, roi=roi, roi_type="partial"
             )
 
-            self.shape_image = pcv.analyze.size(img=self.image, labeled_mask=mask)
+            self.shape_image = pcv.analyze.size(img=self.image,
+                                                labeled_mask=mask)
 
             self.boundary_image_h = pcv.analyze.bound_horizontal(
                 img=self.image,
@@ -436,14 +458,14 @@ class Transformation:
         except Exception as e:
             raise RuntimeError(f"Failed to create ROI and objects: {e}") from e
 
-        if self.output_dir:
+        if self.output_dir is not None and not self.keep_dir_structure:
             save_image(self.shape_image, os.path.join(
                 self.output_dir,
                 f"{self.image_name}_analyze_object.jpg"))
             save_image(self.boundary_image_h, os.path.join(
                 self.output_dir,
                 f"{self.image_name}_roi_objects.jpg"))
-        else:
+        elif self.output_dir is None:
             show_image(self.shape_image, title="Analyze Object", color="rgb")
             show_image(self.boundary_image_h, title="ROI Objects", color="rgb")
 
@@ -500,7 +522,8 @@ class Transformation:
                 try:
                     x, y = int(point[0][0]), int(point[0][1])
                     cv2.circle(
-                        image, center=(x, y), radius=3, color=color, thickness=-1
+                        image, center=(x, y), radius=3, color=color,
+                        thickness=-1
                     )
                 except Exception as ie:
                     raise RuntimeError(
@@ -513,13 +536,13 @@ class Transformation:
         # Draw center landmarks in orange
         draw_landmarks(self.image_with_landmarks, center_v, (0, 165, 255))
 
-        if self.output_dir:
+        if self.output_dir is not None and not self.keep_dir_structure:
             save_image(
                 self.image_with_landmarks,
                 os.path.join(
                     self.output_dir,
                     f"{self.image_name}_pseudolandmarks.jpg"))
-        else:
+        elif self.output_dir is None:
             show_image(
                 self.image_with_landmarks,
                 title="Image with Pseudolandmarks",
@@ -599,11 +622,11 @@ class Transformation:
         plt.ylabel("Proportion of Pixels (%)")
         plt.legend()
         plt.tight_layout()
-        if self.output_dir:
+        if self.output_dir is not None and not self.keep_dir_structure:
             plt.savefig(os.path.join(
                 self.output_dir,
                 f"{self.image_name}_color_histogram.jpg"))
-        else:
+        elif self.output_dir is None:
             plt.show()
         plt.close()
 
@@ -659,6 +682,10 @@ class Transformation:
         ):
             raise ValueError("Output directory not specified")
 
+        total_images = count_image(self.input_dir)
+        progress_bar = tqdm(
+            total=total_images, desc="Processing images"
+        )
         # Traverse through all files in input_dir
         for subdir, _, files in os.walk(self.input_dir):
             for file in files:
@@ -676,8 +703,61 @@ class Transformation:
                         print(f"Failed to process image {image_path}: {e}")
                         continue
 
+                    if self.keep_dir_structure:
+                        relative_path = os.path.relpath(subdir, self.input_dir)
+                        output_subdir = os.path.join(self.output_dir,
+                                                     relative_path)
+                        self.save_transformed_images(output_subdir)
+
+                    progress_bar.update(1)
+
+        progress_bar.close()
+
+    def save_transformed_images(self, output_subdir: str) -> None:
+        """
+        Save all the intermediate and final images
+        to the specified output subdirectory.
+
+        Args:
+            output_subdir (str): The sub-subdirectory
+                within the output directory to save the images.
+
+        Returns:
+            None
+        """
+        if self.output_dir:
+            save_image(
+                self.image,
+                os.path.join(
+                    output_subdir,
+                    f"{self.image_name}_original.jpg"))
+            save_image(
+                self.gaussian_blur,
+                os.path.join(
+                    output_subdir,
+                    f"{self.image_name}_gaussian_blur.jpg"))
+            save_image(
+                self.diseased_image,
+                os.path.join(
+                    output_subdir,
+                    f"{self.image_name}_diseased.jpg"))
+            save_image(
+                self.shape_image,
+                os.path.join(
+                    output_subdir,
+                    f"{self.image_name}_analyze_object.jpg"))
+            save_image(
+                self.boundary_image_h,
+                os.path.join(
+                    output_subdir,
+                    f"{self.image_name}_roi_objects.jpg"))
+            save_image(
+                self.image_with_landmarks,
+                os.path.join(
+                    output_subdir,
+                    f"{self.image_name}_pseudolandmarks.jpg"))
+
 
 if __name__ == "__main__":
     img = "../../leaves/images/Apple_healthy/image (65).JPG"
     Transformation(image_path=img)
-
