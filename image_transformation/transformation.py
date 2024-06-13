@@ -1,12 +1,14 @@
 import os
+import sys
 from typing import Union
 
 import click
 
-from utils.transformation_utils import Transformation
+from image_transformation.utils.transformation_utils import Transformation
 
 
-def validate_source(ctx: click.Context, param: click.Parameter, value: str) -> str:
+def validate_source(ctx: click.Context,
+                    param: click.Parameter, value: str) -> str:
     """
     Validate the source parameter.
 
@@ -19,16 +21,18 @@ def validate_source(ctx: click.Context, param: click.Parameter, value: str) -> s
         str: The validated source value.
 
     Raises:
-        click.BadParameter: If the source is not a directory or a .jpg file.
+        click.BadParameter: If the source is not a
+            directory or a .jpg file.
     """
     if os.path.isdir(value):
         return value
-    elif value and not value.lower().endswith('.jpg'):
+    elif value and not value.casefold().endswith('.jpg'):
         raise click.BadParameter('Source file must be a .jpg image.')
     return value
 
 
-def validate_directory(ctx: click.Context, param: click.Parameter, value: Union[str, None]) -> Union[str, None]:
+def validate_directory(ctx: click.Context, param: click.Parameter,
+                       value: Union[str, None]) -> Union[str, None]:
     """
     Validate the destination directory parameter.
 
@@ -45,8 +49,7 @@ def validate_directory(ctx: click.Context, param: click.Parameter, value: Union[
     """
     if value:
         try:
-            if not os.path.exists(value):
-                os.makedirs(value)
+            os.makedirs(value, exist_ok=True)
             if not os.path.isdir(value):
                 raise click.BadParameter(f'{value} is not a valid directory.')
         except Exception as e:
@@ -55,8 +58,10 @@ def validate_directory(ctx: click.Context, param: click.Parameter, value: Union[
 
 
 @click.command()
-@click.option(param_decls='--src', required=True, help='Source image or directory', callback=validate_source)
-@click.option(param_decls='--dst', help='Destination directory', callback=validate_directory)
+@click.option('--src', required=True,
+              help='Source image or directory', callback=validate_source)
+@click.option('--dst',
+              help='Destination directory', callback=validate_directory)
 def transformation(src: str, dst: Union[str, None]) -> None:
     """
      Perform the transformation based on the source and destination.
@@ -71,15 +76,21 @@ def transformation(src: str, dst: Union[str, None]) -> None:
     if os.path.isfile(src):
         click.echo(f'Source file is a valid .jpg image: {src}')
         Transformation(image_path=src)
+        sys.exit(0)
 
     elif os.path.isdir(src):
         if not dst:
-            raise click.UsageError('If --src is a directory, --dst must also be specified and must be a directory.')
+            raise click.UsageError(
+                'If --src is a directory,'
+                '--dst must also be specified and must be a directory.')
         click.echo(f'Source directory: {src}')
         click.echo(f'Destination directory: {dst}')
         Transformation(input_dir=src, output_dir=dst)
+        sys.exit(0)
+
     else:
-        raise click.UsageError('Invalid source. Must be either a .jpg image or a directory.')
+        raise click.UsageError(
+            'Invalid source. Must be either a .jpg image or a directory.')
 
 
 if __name__ == '__main__':
