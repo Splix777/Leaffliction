@@ -34,13 +34,15 @@ def save_image(image: np.ndarray, output_path: str):
 
 
 class Transformation:
-    def __init__(self, image_path: str = None, output_dir: str = None):
-        self.image_name = None
+    def __init__(self, image_path: str = None, input_dir: str = None, output_dir: str = None):
+        self.image_name = image_path
+        self.input_dir = input_dir
         self.output_dir = output_dir
-        if output_dir is not None:
-            os.makedirs(output_dir, exist_ok=True)
+        if input_dir is not None and output_dir is not None:
+            self.apply_transformation_from_file()
         if image_path is not None:
             self.load_image(image_path)
+            self.apply_transformations()
         # Intermediate images
         self.gray_image = None
         self.refined_mask = None
@@ -54,8 +56,6 @@ class Transformation:
         self.boundary_image_h = None
         self.shape_image = None
         self.image_with_landmarks = None
-        # Apply transformations
-        self.apply_transformations()
 
     @staticmethod
     def calculate_roi(image):
@@ -329,6 +329,8 @@ class Transformation:
                 f"{self.image_name}_color_histogram.jpg"))
         else:
             plt.show()
+        # Close the figure after saving or showing it
+        plt.close()
 
     def apply_transformations(self):
         self._white_balance()
@@ -338,6 +340,16 @@ class Transformation:
         self._create_roi_and_objects()
         self._pseudolandmarks()
         self._color_histogram()
+
+    def apply_transformation_from_file(self):
+        if self.output_dir is None:
+            raise ValueError("Output directory not specified")
+        for subdir, _, files in os.walk(self.input_dir):
+            for file in files:
+                if file.lower().endswith(".jpg"):
+                    image_path = os.path.join(subdir, file)
+                    self.load_image(str(image_path))
+                    self.apply_transformations()
 
 
 if __name__ == "__main__":
