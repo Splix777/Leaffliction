@@ -6,8 +6,9 @@ from scipy.ndimage import gaussian_filter, map_coordinates
 
 def barrel_distortion(image: np.ndarray, k1: float = 0.3) -> np.ndarray:
     """
-    Applies barrel distortion to the input image. Make the image
-    look as thought its being viewed through a fisheye lens.
+    Applies barrel distortion to the input image.
+    Make the image look as thought its being viewed
+    through a fisheye lens.
 
     Args:
     image (np.ndarray): Input image
@@ -66,7 +67,7 @@ def barrel_distortion(image: np.ndarray, k1: float = 0.3) -> np.ndarray:
             src=image, cameraMatrix=K, distCoeffs=dist_coef
         )
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during undistort: {e}")
+        raise RuntimeError(f"OpenCV error during undistort: {e}") from e
 
     return distorted
 
@@ -220,7 +221,7 @@ def affine_transform(
             borderValue=(255, 255, 255),
         )
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during affine transform: {e}")
+        raise RuntimeError(f"OpenCV error during affine transform: {e}") from e
 
     return translated
 
@@ -277,7 +278,8 @@ def perspective_transform_manual(
             borderValue=(255, 255, 255),
         )
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during perspective transform: {e}")
+        raise RuntimeError(
+            f"OpenCV error during perspective transform: {e}") from e
 
     return transformed
 
@@ -300,8 +302,8 @@ def elastic_transform(
     try:
         # Ensure input image is RGB (HxWxC)
         assert len(image.shape) == 3
-    except AssertionError:
-        raise ValueError("Input image must be color (HxWxC)")
+    except AssertionError as e:
+        raise ValueError("Input image must be color (HxWxC)") from e
 
     shape = image.shape
     shape_size = shape[:2]
@@ -327,7 +329,7 @@ def elastic_transform(
             * alpha
         )
     except Exception as e:
-        raise ValueError(f"Failed to generate displacement fields: {e}")
+        raise ValueError(f"Failed to generate displacement fields: {e}") from e
 
     x, y = np.meshgrid(np.arange(shape_size[1]), np.arange(shape_size[0]))
     indices = (np.reshape(y + dy, (-1, 1)), np.reshape(x + dx, (-1, 1)))
@@ -371,7 +373,7 @@ def color_jitter(
         # Convert image to HSV format for easier manipulation of color channels
         image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV).astype(np.float32)
     except Exception as e:
-        raise ValueError(f"Failed to convert image to HSV format: {e}")
+        raise ValueError(f"Failed to convert image to HSV format: {e}") from e
 
     try:
         # Brightness
@@ -397,7 +399,7 @@ def color_jitter(
         image[:, :, 1] = np.clip(image[:, :, 1], 0, 255)
         image[:, :, 2] = np.clip(image[:, :, 2], 0, 255)
     except Exception as e:
-        raise ValueError(f"Failed to apply color jitter: {e}")
+        raise ValueError(f"Failed to apply color jitter: {e}") from e
 
     try:
         # Convert image back to BGR format for consistency
@@ -444,7 +446,7 @@ def add_noise(
                 "Unsupported noise type. Supported types: 'gaussian'"
             )
     except Exception as e:
-        raise ValueError(f"Failed to add noise: {e}")
+        raise ValueError(f"Failed to add noise: {e}") from e
 
 
 def flip_image(image: np.ndarray, flip_code: int = 1) -> np.ndarray:
@@ -472,7 +474,7 @@ def flip_image(image: np.ndarray, flip_code: int = 1) -> np.ndarray:
         # Use the OpenCV function cv2.flip() to flip the image
         flipped = cv2.flip(src=image, flipCode=flip_code)
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during image flip: {e}")
+        raise RuntimeError(f"OpenCV error during image flip: {e}") from e
 
     return flipped
 
@@ -514,7 +516,7 @@ def rotate_image(image: np.ndarray, degree: float = 45) -> np.ndarray:
             borderValue=(255, 255, 255),
         )
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during image rotation: {e}")
+        raise RuntimeError(f"OpenCV error during image rotation: {e}") from e
 
     return rotated
 
@@ -557,7 +559,7 @@ def random_skew(image: np.ndarray) -> np.ndarray:
             borderValue=(255, 255, 255),
         )
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during image skew: {e}")
+        raise RuntimeError(f"OpenCV error during image skew: {e}") from e
 
     return skewed_image
 
@@ -599,7 +601,7 @@ def shear_image(image: np.ndarray, shear_factor: float = 0.2) -> np.ndarray:
             borderValue=(255, 255, 255),
         )
     except (cv2.error, Exception) as e:
-        raise RuntimeError(f"OpenCV error during image shear: {e}")
+        raise RuntimeError(f"OpenCV error during image shear: {e}") from e
 
     return sheared_image
 
@@ -635,7 +637,7 @@ def crop_image(
         # Crop the image using the specified coordinates
         cropped = image[y1:y2, x1:x2]
     except Exception as e:
-        raise RuntimeError(f"Failed to crop image: {e}")
+        raise RuntimeError(f"Failed to crop image: {e}") from e
 
     return cropped
 
@@ -672,7 +674,7 @@ def apply_contrast(
         # Apply contrast adjustment to the image
         contrasted = cv2.convertScaleAbs(src=image, alpha=alpha, beta=0)
     except Exception as e:
-        raise RuntimeError(f"Failed to apply contrast adjustment: {e}")
+        raise RuntimeError(f"Failed to apply contrast adjustment: {e}") from e
 
     return contrasted
 

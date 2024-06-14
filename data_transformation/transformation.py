@@ -4,7 +4,7 @@ from typing import Union
 
 import click
 
-from data_transformation.utils.transformation_utils import Transformation
+from data_transformation.utils.transformation_class import Transformation
 
 
 def validate_source(ctx: click.Context,
@@ -39,13 +39,15 @@ def validate_directory(ctx: click.Context, param: click.Parameter,
     Args:
         ctx (click.Context): The Click context.
         param (click.Parameter): The Click parameter.
-        value (Union[str, None]): The value of the destination directory parameter.
+        value (Union[str, None]): The value of the
+            destination directory parameter.
 
     Returns:
         Union[str, None]: The validated directory value.
 
     Raises:
-        click.BadParameter: If the directory cannot be created or is invalid.
+        click.BadParameter: If the directory cannot
+            be created or is invalid.
     """
     if value:
         try:
@@ -53,19 +55,22 @@ def validate_directory(ctx: click.Context, param: click.Parameter,
             if not os.path.isdir(value):
                 raise click.BadParameter(f'{value} is not a valid directory.')
         except Exception as e:
-            raise click.BadParameter(f"Couldn't create directory {value}: {e}") from e
+            raise click.BadParameter(
+                f"Couldn't create directory {value}: {e}") from e
     return value
 
 
-def transformation(
-        src: str, dst: str | None, keep_dir_structure: bool) -> None:
+def transformation(src: str, dst: str | None = None,
+                   keep_dir_structure: bool = False) -> None:
     """
-     Perform the transformation based on the source and destination.
+     Perform the transformation based on the
+     source and destination.
 
      Args:
          src (str): The source image or directory.
          dst (Union[str, None]): The destination directory.
-         keep_dir_structure (bool): Whether to keep the directory structure.
+         keep_dir_structure (bool): Whether to keep the
+            directory structure.
 
      Raises:
          click.UsageError: If the source is a directory
@@ -98,11 +103,12 @@ def transformation(
               help='Source image or directory', callback=validate_source)
 @click.option('--dst',
               help='Destination directory', callback=validate_directory)
-def cli_transformation(src: str, dst: str | None) -> None:
+def cli_transformation(src: str, dst: str | None = None) -> None:
     transformation(src, dst)
 
 
 if __name__ == '__main__':
-    src_dir = '../leaves'
-    dst_dir = '../leaves_augmented'
-    transformation(src=src_dir, dst=dst_dir)
+    img_path = '../leaves/images/Apple_rust/image (2).JPG'
+    src_dir = '../leaves/images/Apple_rust'
+    dst_dir = '../output/Apple_rust'
+    transformation(src=src_dir, dst=dst_dir, keep_dir_structure=True)

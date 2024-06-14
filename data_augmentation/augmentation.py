@@ -43,22 +43,69 @@ AUGMENTATION_FUNCTIONS = {
 }
 
 
-def load_image(image_path):
+def load_image(image_path: str) -> cv2.imread:
+    """
+    Load an image from a file path.
+
+    Args:
+        image_path: The path to the image file.
+
+    Returns:
+        The image as a numpy array.
+    """
     return cv2.imread(image_path)
 
 
-def save_image(image, path):
+def save_image(image: cv2.imread, path: str) -> None:
+    """
+    Save an image to a file path.
+
+    Args:
+        image: The image to save.
+        path: The path to save the image to.
+
+    Returns:
+        None
+    """
     cv2.imwrite(path, image)
 
 
-def augment_image(image, augmentation_type):
+def augment_image(image: cv2.imread, augmentation_type: str) -> cv2.imread:
+    """
+    Apply an augmentation to an image.
+
+    Args:
+        image: The image to augment.
+        augmentation_type: The type of augmentation to apply.
+
+    Returns:
+        The augmented image.
+
+    Raises:
+        ValueError: If the augmentation type is not supported.
+    """
     if augmentation_type in AUGMENTATION_FUNCTIONS:
         return AUGMENTATION_FUNCTIONS[augmentation_type](image)
     else:
         raise ValueError(f"Unsupported augmentation type: {augmentation_type}")
 
 
-def perform_augmentation(image_path, input_directory, output_directory):
+def perform_augmentation(image_path: str, input_directory: str,
+                         output_directory: str) -> list:
+    """
+    Perform augmentation on an image and save the
+    augmented images to a directory.
+
+    Args:
+        image_path: The path to the image to augment.
+        input_directory: The directory containing
+            the input images.
+        output_directory: The directory to save the
+            augmented images to.
+
+    Returns:
+        A list of paths to the augmented images.
+    """
     image = load_image(image_path)
     relative_path = os.path.relpath(image_path, input_directory)
     base_name, ext = os.path.splitext(relative_path)
@@ -79,7 +126,20 @@ def perform_augmentation(image_path, input_directory, output_directory):
     return augmented_images
 
 
-def count_and_copy_images(input_directory, output_directory):
+def count_and_copy_images(input_directory: str, output_directory: str) -> dict:
+    """
+    Count the number of images in each class and copy
+    the images to the output directory.
+
+    Args:
+        input_directory: The directory containing
+            the input images.
+        output_directory: The directory to save the
+            images to.
+
+    Returns:
+        A dictionary containing the number of images in each class.
+    """
     class_counts = {}
     for subdir, _, files in os.walk(input_directory):
         class_name = os.path.basename(subdir).lower()
@@ -89,18 +149,53 @@ def count_and_copy_images(input_directory, output_directory):
             if file.lower().endswith(IMAGE_EXTENSIONS):
                 class_counts[class_name] += 1
                 image_path = os.path.join(subdir, file)
-                relative_path = os.path.relpath(
-                    str(image_path), str(input_directory)
-                )
-                output_path = os.path.join(
-                    str(output_directory), str(relative_path)
-                )
+                relative_path = os.path.relpath(image_path, input_directory)
+                output_path = os.path.join(output_directory, relative_path)
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
                 shutil.copy2(str(image_path), str(output_path))
+
     return class_counts
 
 
-def balance_dataset(input_directory, output_directory):
+def find_data_directory(start_directory: str) -> str:
+    """
+    Find the directory containing multiple subdirectories
+    under the starting directory.
+
+    Args:
+        start_directory: The directory to start looking from.
+
+    Returns:
+        The directory containing multiple subdirectories.
+    """
+    current_dir = start_directory
+    while True:
+        subdirectories = next(os.walk(str(current_dir)))[1]
+        if len(subdirectories) > 1:
+            break
+        if len(subdirectories) == 1:
+            current_dir = os.path.join(current_dir, subdirectories[0])
+        else:
+            raise ValueError(
+                f"No multiple subdirectories found under {start_directory}")
+
+    return current_dir
+
+
+def balance_dataset(input_directory: str, output_directory: str) -> None:
+    """
+    Balance the dataset by augmenting the images in each class
+    to have the same number of images.
+
+    Args:
+        input_directory: The directory containing
+            the input images.
+        output_directory: The directory to save the
+            augmented images to.
+
+    Returns:
+        None
+    """
     class_counts = count_and_copy_images(input_directory, output_directory)
     max_images = max(class_counts.values())
 
@@ -123,24 +218,37 @@ def balance_dataset(input_directory, output_directory):
                     )
                     num_images += len(augmented_images)
                     progress_bar.update(len(augmented_images))
+
         progress_bar.close()
 
 
-def augmentation(input_directory: str = None) -> None:
-    if len(sys.argv) != 2 and input_directory is None:
+def augmentation(input_dir: str = None, output_dir: str = None) -> None:
+    """
+    Perform data augmentation on a dataset.
+
+    Args:
+        input_dir: The directory containing the input images.
+        output_dir: The directory to save the augmented images to.
+
+    Returns:
+        None
+    """
+    if len(sys.argv) != 2 and input_dir is None:
         print("Usage: python Augmentation.py <directory>")
         sys.exit(1)
 
-    directory = sys.argv[1] if input_directory is None else input_directory
+    directory = sys.argv[1] if input_dir is None else input_dir
     if not os.path.isdir(directory):
         print("The provided path is not a directory.")
         sys.exit(1)
 
-    augmented_dir = f"{directory}_augmented"
+    data_dir = find_data_directory(directory)
+    augmented_dir = output_dir or f"data/{os.path.basename(data_dir)}_augmented"
     os.makedirs(augmented_dir, exist_ok=True)
 
-    balance_dataset(directory, augmented_dir)
+    balance_dataset(data_dir, augmented_dir)
 
 
 if __name__ == "__main__":
-    augmentation()
+    apples = "../leaves/images/Apple_rust"
+    augmentation(input_dir=apples)

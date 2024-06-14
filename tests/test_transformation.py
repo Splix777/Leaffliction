@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from data_transformation.utils.transformation_utils import (
+from data_transformation.utils.transformation_class import (
     show_image,
     save_image,
     Transformation,
@@ -216,9 +216,9 @@ def test_load_image(image_path, is_file, raises, mock_pcv, mock_os):
     # Act & Assert
     if raises:
         with pytest.raises(ValueError):
-            transformation.load_image(image_path)
+            transformation._load_image(image_path)
     else:
-        transformation.load_image(image_path)
+        transformation._load_image(image_path)
         assert transformation.image is not None
 
 
