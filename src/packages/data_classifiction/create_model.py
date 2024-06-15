@@ -2,7 +2,7 @@ import json
 
 import tensorflow as tf
 from keras import Sequential
-from keras.src.callbacks import EarlyStopping
+from keras.src.callbacks import EarlyStopping, TensorBoard
 from keras.src.layers import (
     ReLU,
     Softmax,
@@ -23,8 +23,14 @@ from keras.src.saving.saving_api import save_model
 from keras.src.utils.image_dataset_utils import image_dataset_from_directory
 from matplotlib import pyplot as plt
 
+from ..utils.config import Config
+from ..utils.logger import Logger
 
-def plot_training_metrics(history: tf.keras.callbacks.History, model_path: str) -> None:
+config = Config()
+logger = Logger("ModelMaker").get_logger()
+
+def plot_training_metrics(history: tf.keras.callbacks.History,
+                          model_path: str) -> None:
     """
     Plot the training metrics
 
@@ -148,10 +154,12 @@ class ModelMaker:
         self.src_data = src_data
         self.train_df = None
         self.val_df = None
+        self.num_classes = None
         self.model = None
 
         self._load_data_to_keras()
         self._create_model()
+        self._fit_model()
 
     def _load_data_to_keras(self) -> None:
         train_df, val_df = image_dataset_from_directory(
@@ -168,38 +176,7 @@ class ModelMaker:
         )
         self.train_df = train_df
         self.val_df = val_df
-
-    def _create_model(self) -> None:
-        model = Sequential()
-        model.add(Input(shape=(256, 256, 3)))
-        model.add(Rescaling(1. / 255))
-        self._add_conv2d(model, 16)
-
-        self._add_conv2d(model, 32)
-        model.add(Dropout(0.25))
-
-        self._add_conv2d(model, 64)
-        model.add(Dropout(0.25))
-
-        self._add_conv2d(model, 128)
-        model.add(Dropout(0.25))
-
-        model.add(GlobalAveragePooling2D())
-        model.add(Dense(units=256, activation='relu'))
-        model.add(Dropout(0.5))
-        model.add(Dense(units=128, activation='relu'))
-        model.add(Dropout(0.5))
-        model.add(Dense(units=2, activation='softmax'))
-
-        print(model.summary())
-
-        model.compile(
-            optimizer=Adam(learning_rate=0.001),
-            loss=SparseCategoricalCrossentropy(),
-            metrics=['accuracy'],
-        )
-
-        self.model = model
+        self.num_classes = len(train_df.class_names)
 
     @staticmethod
     def _add_conv2d(model, filters):
@@ -214,3 +191,68 @@ class ModelMaker:
         )
         model.add(BatchNormalization())
         model.add(MaxPooling2D())
+
+    def _create_model(self) -> None:
+        model = Sequential()
+        model.add(Input(shape=(256, 256, 3)))
+        model.add(Rescaling(1. / 255))
+        self._add_conv2d(model, 16)
+
+        self._add_conv2d(model, 32)
+        model.add(Dropout(0.2))
+
+        self._add_conv2d(model, 64)
+        model.add(Dropout(0.2))
+
+        self._add_conv2d(model, 128)
+        model.add(Dropout(0.2))
+
+        model.add(GlobalAveragePooling2D())
+        model.add(Dense(units=256, activation='relu'))
+        model.add(Dropout(0.4))
+        model.add(Dense(units=128, activation='relu'))
+        model.add(Dropout(0.4))
+        model.add(Dense(units=self.num_classes, activation='softmax'))
+
+        print(model.summary())
+
+        model.compile(
+            optimizer=Adam(learning_rate=0.001),
+            loss=SparseCategoricalCrossentropy(),
+            metrics=['accuracy'],
+        )
+
+        self.model = model
+
+    def _fit_model(self) -> None:
+        log_dir = config.logs_dir
+
+        history = self.model.fit(
+            self.train_df,
+            validation_data=self.val_df,
+            epochs=10,
+            callbacks=[EarlyStopping(
+                monitor='val_loss',
+                patience=3,
+                verbose=1,
+                restore_best_weights=True,
+            ),
+                TensorBoard(
+                    log_dir=log_dir,
+                    histogram_freq=1)],
+            batch_size=16,
+            verbose=1,
+        )
+
+        self.history_dict = history.history
+        # Create a JSON string with indentation and sorted keys
+        history_json = json.dumps(self.history_dict, indent=4, sort_keys=True)
+
+        # Write the JSON string to a file
+        history_json_file = f'{self.src_data}_history.json'
+        with open(history_json_file, 'w') as f:
+            f.write(history_json)
+
+        plot_training_metrics(history, f"{self.src_data}")
+
+        save_model(model=self.model, filepath=f"{self.src_data}.keras")
