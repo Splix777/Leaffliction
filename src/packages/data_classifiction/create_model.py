@@ -1,10 +1,13 @@
 import json
-from typing import Tuple
 
 import tensorflow as tf
 from keras import Sequential
 from keras.src.callbacks import EarlyStopping
 from keras.src.layers import (
+    ReLU,
+    Softmax,
+    Flatten,
+    Input,
     Rescaling,
     Conv2D,
     MaxPooling2D,
@@ -80,88 +83,25 @@ def plot_training_metrics(history: tf.keras.callbacks.History, model_path: str) 
     plt.show()
 
 
-def load_data_to_keras(src: str) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-    """
-    Load the data from the source directory to Keras
-    dataset objects.
-
-    Args:
-        src (str): The source directory containing the images
-
-    Returns:
-        Tuple[tf.data.Dataset, tf.data.Dataset]:
-            The training and validation datasets
-    """
-    train_df, val_df = image_dataset_from_directory(
-        directory=src,          # The directory containing the images
-        labels='inferred',      # The labels are inferred from dir structure
-        label_mode='int',       # The labels are integers
-        batch_size=32,          # The batch size, 32 images per batch
-        image_size=(256, 256),  # The images are resized to 256x256
-        shuffle=True,           # Shuffles the dataset
-        seed=69,                # The seed for shuffling
-        validation_split=0.2,   # 20% of the data is used for validation
-        subset='both',          # Training and Validation sets are returned
-        verbose=True,           # Print the dataset information
-    )
-
-    return train_df, val_df
-
-
 def create_model(src_data) -> Sequential:
     train_df, val_df = load_data_to_keras(src_data)
     num_classes = len(train_df.class_names)
 
-    # model = Sequential([
-    #     Rescaling(1. / 255),
-    #     Conv2D(filters=16, kernel_size=4, activation=ReLU()),
-    #     MaxPooling2D(),
-    #     Conv2D(filters=32, kernel_size=4, activation=ReLU()),
-    #     MaxPooling2D(),
-    #     Dropout(0.1),
-    #     Conv2D(filters=64, kernel_size=4, activation=ReLU()),
-    #     MaxPooling2D(),
-    #     Dropout(0.1),
-    #     Conv2D(filters=128, kernel_size=4, activation=ReLU()),
-    #     MaxPooling2D(),
-    #     Flatten(),
-    #     Dense(units=128, activation=ReLU()),
-    #     Dense(units=num_classes, activation=Softmax())
-    # ])
-
     model = Sequential([
-        Rescaling(1. / 255),  # Rescale pixel values to [0, 1]
-
-        # Convolutional layers with 3x3 kernel size, ReLU activation, and L2 regularization
-        Conv2D(filters=16, kernel_size=3, activation='relu', padding='same',
-               kernel_regularizer=L2(0.001)),
-        BatchNormalization(),
+        Rescaling(1. / 255),
+        Conv2D(filters=16, kernel_size=4, activation=ReLU()),
         MaxPooling2D(),
-
-        Conv2D(filters=32, kernel_size=3, activation='relu', padding='same',
-               kernel_regularizer=L2(0.001)),
-        BatchNormalization(),
+        Conv2D(filters=32, kernel_size=4, activation=ReLU()),
         MaxPooling2D(),
-        Dropout(0.25),
-
-        Conv2D(filters=64, kernel_size=3, activation='relu', padding='same',
-               kernel_regularizer=L2(0.001)),
-        BatchNormalization(),
+        Dropout(0.1),
+        Conv2D(filters=64, kernel_size=4, activation=ReLU()),
         MaxPooling2D(),
-        Dropout(0.25),
-
-        Conv2D(filters=128, kernel_size=3, activation='relu', padding='same',
-               kernel_regularizer=L2(0.001)),
-        BatchNormalization(),
+        Dropout(0.1),
+        Conv2D(filters=128, kernel_size=4, activation=ReLU()),
         MaxPooling2D(),
-        Dropout(0.25),
-
-        GlobalAveragePooling2D(),
-        Dense(units=256, activation='relu'),
-        Dropout(0.5),
-        Dense(units=128, activation='relu'),
-        Dropout(0.5),
-        Dense(units=num_classes, activation='softmax')
+        Flatten(),
+        Dense(units=128, activation=ReLU()),
+        Dense(units=num_classes, activation=Softmax())
     ])
 
     model.build(input_shape=(None, 256, 256, 3))
@@ -206,6 +146,71 @@ def create_model(src_data) -> Sequential:
 class ModelMaker:
     def __init__(self, src_data: str):
         self.src_data = src_data
+        self.train_df = None
+        self.val_df = None
+        self.model = None
 
-    def create_model(self) -> Sequential:
-        return create_model(self.src_data)
+        self._load_data_to_keras()
+        self._create_model()
+
+    def _load_data_to_keras(self) -> None:
+        train_df, val_df = image_dataset_from_directory(
+            directory=self.src_data,  # The directory containing the images
+            labels='inferred',  # The labels are inferred from dir structure
+            label_mode='int',  # The labels are integers
+            batch_size=32,  # The batch size, 32 images per batch
+            image_size=(256, 256),  # The images are resized to 256x256
+            shuffle=True,  # Shuffles the dataset
+            seed=69,  # The seed for shuffling
+            validation_split=0.2,  # 20% of the data is used for validation
+            subset='both',  # Training and Validation sets are returned
+            verbose=True,  # Print the dataset information
+        )
+        self.train_df = train_df
+        self.val_df = val_df
+
+    def _create_model(self) -> None:
+        model = Sequential()
+        model.add(Input(shape=(256, 256, 3)))
+        model.add(Rescaling(1. / 255))
+        self._add_conv2d(model, 16)
+
+        self._add_conv2d(model, 32)
+        model.add(Dropout(0.25))
+
+        self._add_conv2d(model, 64)
+        model.add(Dropout(0.25))
+
+        self._add_conv2d(model, 128)
+        model.add(Dropout(0.25))
+
+        model.add(GlobalAveragePooling2D())
+        model.add(Dense(units=256, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(units=128, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(units=2, activation='softmax'))
+
+        print(model.summary())
+
+        model.compile(
+            optimizer=Adam(learning_rate=0.001),
+            loss=SparseCategoricalCrossentropy(),
+            metrics=['accuracy'],
+        )
+
+        self.model = model
+
+    @staticmethod
+    def _add_conv2d(model, filters):
+        model.add(
+            Conv2D(
+                filters=filters,
+                kernel_size=3,
+                activation='relu',
+                padding='same',
+                kernel_regularizer=L2(0.001),
+            )
+        )
+        model.add(BatchNormalization())
+        model.add(MaxPooling2D())

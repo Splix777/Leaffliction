@@ -4,11 +4,9 @@ import sys
 
 from packages.data_classifiction.classification_utils import contains_jpgs
 from packages.data_classifiction.create_model import ModelMaker
-from packages.utils.config import Config
 from packages.utils.decorators import error_handling_decorator
 from packages.utils.logger import Logger
 
-config = Config()
 logger = Logger("Train").get_logger()
 
 
