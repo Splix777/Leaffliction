@@ -97,3 +97,5 @@ wrapt==1.16.0
 xarray==2024.6.0
 zict==3.0.0
 zipp==3.19.2
+
+pytest~=8.2.2

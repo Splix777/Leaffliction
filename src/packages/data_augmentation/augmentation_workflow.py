@@ -1,12 +1,11 @@
-import copy
 import os
 import shutil
-import sys
 
 import cv2
+import numpy as np
 from tqdm import tqdm
 
-from data_augmentation.utils.augmentation_utils import (
+from src.packages.data_augmentation.agumentation_functions import (
     flip_image,
     rotate_image,
     random_skew,
@@ -22,8 +21,12 @@ from data_augmentation.utils.augmentation_utils import (
     pincushion_distortion,
     mustache_distortion,
 )
+from src.packages.utils.config import Config
+from src.packages.utils.decorators import error_handling_decorator
+from src.packages.utils.logger import Logger
 
-IMAGE_EXTENSIONS = ("jpg", "jpeg", "png")
+config = Config()
+logger = Logger("Aug_Workflow").get_logger()
 
 AUGMENTATION_FUNCTIONS = {
     "Flip": flip_image,
@@ -70,6 +73,7 @@ def save_image(image: cv2.imread, path: str) -> None:
     cv2.imwrite(path, image)
 
 
+@error_handling_decorator(handle_exceptions=(ValueError, cv2.error))
 def augment_image(image: cv2.imread, augmentation_type: str) -> cv2.imread:
     """
     Apply an augmentation to an image.
@@ -90,6 +94,7 @@ def augment_image(image: cv2.imread, augmentation_type: str) -> cv2.imread:
         raise ValueError(f"Unsupported augmentation type: {augmentation_type}")
 
 
+@error_handling_decorator(handle_exceptions=(cv2.error,))
 def perform_augmentation(image_path: str, input_directory: str,
                          output_directory: str) -> list:
     """
@@ -117,7 +122,7 @@ def perform_augmentation(image_path: str, input_directory: str,
 
     augmented_images = []
     for aug_type in AUGMENTATION_FUNCTIONS.keys():
-        augmented_image = augment_image(copy.deepcopy(image), aug_type)
+        augmented_image = augment_image(np.copy(image), aug_type)
         new_image_name = f"{os.path.basename(base_name)}_{aug_type}{ext}"
         new_image_path = os.path.join(output_subdirectory, new_image_name)
         save_image(augmented_image, new_image_path)
@@ -126,6 +131,7 @@ def perform_augmentation(image_path: str, input_directory: str,
     return augmented_images
 
 
+@error_handling_decorator()
 def count_and_copy_images(input_directory: str, output_directory: str) -> dict:
     """
     Count the number of images in each class and copy
@@ -146,7 +152,7 @@ def count_and_copy_images(input_directory: str, output_directory: str) -> dict:
         if class_name not in class_counts:
             class_counts[class_name] = 0
         for file in files:
-            if file.lower().endswith(IMAGE_EXTENSIONS):
+            if file.casefold().endswith('jpg'):
                 class_counts[class_name] += 1
                 image_path = os.path.join(subdir, file)
                 relative_path = os.path.relpath(image_path, input_directory)
@@ -157,6 +163,7 @@ def count_and_copy_images(input_directory: str, output_directory: str) -> dict:
     return class_counts
 
 
+@error_handling_decorator(handle_exceptions=(ValueError,))
 def find_data_directory(start_directory: str) -> str:
     """
     Find the directory containing multiple subdirectories
@@ -179,7 +186,7 @@ def find_data_directory(start_directory: str) -> str:
             raise ValueError(
                 f"No multiple subdirectories found under {start_directory}")
 
-    return current_dir
+    return str(current_dir)
 
 
 def balance_dataset(input_directory: str, output_directory: str) -> None:
@@ -198,6 +205,7 @@ def balance_dataset(input_directory: str, output_directory: str) -> None:
     """
     class_counts = count_and_copy_images(input_directory, output_directory)
     max_images = max(class_counts.values())
+    logger.info(f"Class counts: {class_counts}")
 
     for subdir, _, files in os.walk(input_directory):
         class_name = os.path.basename(subdir).lower()
@@ -211,7 +219,7 @@ def balance_dataset(input_directory: str, output_directory: str) -> None:
             for file in files:
                 if num_images >= max_images:
                     break
-                if file.casefold().endswith(IMAGE_EXTENSIONS):
+                if file.casefold().endswith('jpg'):
                     image_path = os.path.join(subdir, file)
                     augmented_images = perform_augmentation(
                         image_path, input_directory, output_directory
@@ -220,35 +228,3 @@ def balance_dataset(input_directory: str, output_directory: str) -> None:
                     progress_bar.update(len(augmented_images))
 
         progress_bar.close()
-
-
-def augmentation(input_dir: str = None, output_dir: str = None) -> None:
-    """
-    Perform data augmentation on a dataset.
-
-    Args:
-        input_dir: The directory containing the input images.
-        output_dir: The directory to save the augmented images to.
-
-    Returns:
-        None
-    """
-    if len(sys.argv) != 2 and input_dir is None:
-        print("Usage: python Augmentation.py <directory>")
-        sys.exit(1)
-
-    directory = sys.argv[1] if input_dir is None else input_dir
-    if not os.path.isdir(directory):
-        print("The provided path is not a directory.")
-        sys.exit(1)
-
-    data_dir = find_data_directory(directory)
-    augmented_dir = output_dir or f"data/{os.path.basename(data_dir)}_augmented"
-    os.makedirs(augmented_dir, exist_ok=True)
-
-    balance_dataset(data_dir, augmented_dir)
-
-
-if __name__ == "__main__":
-    apples = "../leaves/images/Apple_rust"
-    augmentation(input_dir=apples)

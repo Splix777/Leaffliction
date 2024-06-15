@@ -6,12 +6,12 @@ import numpy as np
 from plantcv import plantcv as pcv
 from tqdm import tqdm
 
-from data_transformation.utils.helper_functions import (
+from src.packages.data_transformation.helper_functions import (
     save_image,
     show_image,
     count_images
 )
-from data_transformation.utils.transformation_decorators import (
+from src.packages.utils.decorators import (
     error_handling_decorator,
     timeit,
     ensure_image_loaded
@@ -35,7 +35,7 @@ class Transformation:
         None
     """
     def __init__(self, image_path: str = None, input_dir: str = None,
-                 output_dir: str = None, keep_dir_structure: bool = False
+                 output_dir: str = None, keep_dir_structure: bool = True
                  ) -> None:
         # Intermediate images
         self.gray_image = None
@@ -141,7 +141,7 @@ class Transformation:
                 raise RuntimeError(
                     f"Failed to draw landmarks: {ie}") from ie
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _load_image(self, image_path: str) -> None:
         """
         Load an image from the specified image path and process it.
@@ -164,7 +164,7 @@ class Transformation:
             raise ValueError("Failed to load the image")
         self._save_or_show_img(self.image, "original")
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _white_balance(self) -> None:
         """
         Apply white balance correction to the loaded image
@@ -189,7 +189,7 @@ class Transformation:
 
         self.image = pcv.white_balance(img=self.image, mode="hist", roi=roi)
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _grayscale_conversion(self) -> None:
         """
         Convert the loaded image to grayscale using the
@@ -204,7 +204,7 @@ class Transformation:
         """
         self.gray_image = pcv.rgb2gray_hsv(rgb_img=self.image, channel="s")
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _apply_gaussian_blur(self) -> None:
         """
         Apply Gaussian blur to the generated grayscale image.
@@ -230,7 +230,7 @@ class Transformation:
             color="gray"
         )
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _create_masks(self) -> None:
         """
         Perform various image processing computations
@@ -315,7 +315,7 @@ class Transformation:
 
         self._save_or_show_img(self.diseased_image, "diseased")
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _create_roi_and_objects(self) -> None:
         """
         Create regions of interest (ROI) and analyze objects
@@ -358,7 +358,7 @@ class Transformation:
         self._save_or_show_img(self.shape_image, "analyze_object")
         self._save_or_show_img(self.boundary_image_h, "roi_objects")
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _pseudolandmarks(self) -> None:
         """
         Generate pseudolandmarks on the image based on the
@@ -403,7 +403,7 @@ class Transformation:
             image=self.image_with_landmarks,
             image_suffix="pseudolandmarks")
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _color_histogram(self) -> None:
         """
         Calculate and plot color histograms for the loaded
@@ -464,7 +464,7 @@ class Transformation:
             plt.show()
         plt.close()
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     @ensure_image_loaded
     def _run_workflow(self) -> None:
         """
@@ -496,7 +496,7 @@ class Transformation:
             # Step 7: Plot color histograms for the image
             self._color_histogram()
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     @timeit
     def _apply_transformation_from_file(self) -> None:
         """
@@ -544,7 +544,7 @@ class Transformation:
             output_subdir = os.path.join(self.output_dir, relative_path)
             self._save_batch_images(output_subdir)
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _save_batch_images(self, output_subdir: str) -> None:
         """
         Save all the intermediate and final images
@@ -589,7 +589,7 @@ class Transformation:
                     output_subdir,
                     f"{self.image_name}_pseudolandmarks.jpg"))
 
-    @error_handling_decorator
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
     def _save_or_show_img(self, image: np.ndarray, image_suffix: str,
                           color: str = 'rgb') -> None:
         """

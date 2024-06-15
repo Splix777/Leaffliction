@@ -1,0 +1,18 @@
+{
+  "project": {
+    "name": "Leaffliction",
+    "version": "1.0.0",
+    "description": "A project for leaf image augmentation and analysis."
+  },
+  "settings": {
+    "log_level": "INFO",
+    "max_retries": 3
+  },
+  "paths": {
+    "output_directory": "../../data",
+    "source_directory": "../../src",
+    "logs_directory": "../../logs",
+    "temp_directory": "../../.temp",
+    "images_directory": "../../data/leaves"
+  }
+}

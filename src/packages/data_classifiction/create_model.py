@@ -23,7 +23,7 @@ from keras.src.saving.saving_api import save_model
 from keras.src.utils.image_dataset_utils import image_dataset_from_directory
 from matplotlib import pyplot as plt
 
-from data_classifiction.utils.helper_functions import (
+from src.packages.data_classifiction.utils.helper_functions import (
     validate_source,
     contains_jpgs,
 )
@@ -219,7 +219,7 @@ def core_train(src: str) -> None:
     src_name = os.path.basename(src)
     output_zip = f'../data/{src_name}_augmented.zip'
     augmented_dir = f'../data/{src_name}_augmented'
-    # augmentation(input_dir=src, output_dir=augmented_dir)
+    # augmentation(input_dir=packages, output_dir=augmented_dir)
 
     model = create_model(augmented_dir)
 
@@ -227,7 +227,7 @@ def core_train(src: str) -> None:
 
 
 @click.command()
-@click.option('--src', required=True, help='Source directory.',
+@click.option('--packages', required=True, help='Source directory.',
               callback=validate_source)
 def cli_train(src: str) -> None:
     core_train(src)
