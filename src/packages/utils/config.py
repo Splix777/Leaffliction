@@ -25,7 +25,7 @@ class Config:
         self.temp_dir = None
         self.images_dir = None
         if config_path is None:
-            config_path = Path(__file__).parent / 'config.json'
+            config_path = Path(__file__).parent / '../../../config.json'
         self.config_path = Path(config_path)
         self.load_config()
 

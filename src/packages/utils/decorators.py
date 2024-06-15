@@ -1,10 +1,8 @@
 import time
 from functools import wraps
 
-from src.packages.utils.config import Config
-from src.packages.utils.logger import Logger
+from .logger import Logger
 
-config = Config()
 logger = Logger("Errors").get_logger()
 
 # List of exceptions to handle

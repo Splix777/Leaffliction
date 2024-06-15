@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from src.packages.data_augmentation.agumentation_functions import (
+from .agumentation_functions import (
     flip_image,
     rotate_image,
     random_skew,
@@ -21,9 +21,9 @@ from src.packages.data_augmentation.agumentation_functions import (
     pincushion_distortion,
     mustache_distortion,
 )
-from src.packages.utils.config import Config
-from src.packages.utils.decorators import error_handling_decorator
-from src.packages.utils.logger import Logger
+from ..utils.config import Config
+from ..utils.decorators import error_handling_decorator
+from ..utils.logger import Logger
 
 config = Config()
 logger = Logger("Aug_Workflow").get_logger()

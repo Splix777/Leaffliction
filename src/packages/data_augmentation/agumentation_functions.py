@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.ndimage import gaussian_filter, map_coordinates
 
-from src.packages.utils.decorators import error_handling_decorator
+from ..utils.decorators import error_handling_decorator
 
 
 @error_handling_decorator(handle_exceptions=(ValueError, cv2.error))

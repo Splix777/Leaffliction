@@ -1,6 +1,6 @@
 import logging
 
-from src.packages.utils.config import Config
+from .config import Config
 
 
 class Logger:

@@ -2,9 +2,9 @@ import os
 
 import matplotlib.pyplot as plt
 
-from src.packages.utils.config import Config
-from src.packages.utils.decorators import error_handling_decorator
-from src.packages.utils.logger import Logger
+from ..utils.config import Config
+from ..utils.decorators import error_handling_decorator
+from ..utils.logger import Logger
 
 config = Config()
 logger = Logger("Distribution").get_logger()

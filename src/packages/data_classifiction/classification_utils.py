@@ -1,22 +1,28 @@
 import os
 import zipfile
 
-import click
-
-
-def validate_source(
-        ctx: click.Context, param: click.Parameter, value: str) -> str:
-    if os.path.isdir(value):
-        return value
-    else:
-        raise click.BadParameter('Source must be a valid directory.')
-
 
 def contains_jpgs(directory: str) -> bool:
-    for _, _, files in os.walk(directory):
-        for file in files:
-            if file.casefold().endswith('.jpg'):
-                return True
+    """
+    Check if the directory contains jpg files and at least two subdirectories
+    with jpg files.
+
+    Args:
+        directory (str): The path to the directory to check.
+
+    Returns:
+        bool: True if the directory contains jpg files and at least two
+              subdirectories with jpg files, False otherwise.
+    """
+    subdirectories_with_jpgs = set()
+
+    for subdir, _, files in os.walk(directory):
+        if subdir == directory:
+            continue
+        if any(file.casefold().endswith('.jpg') for file in files):
+            subdirectories_with_jpgs.add(subdir)
+        if len(subdirectories_with_jpgs) >= 2:
+            return True
     return False
 
 

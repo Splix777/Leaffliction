@@ -9,10 +9,10 @@
     "max_retries": 3
   },
   "paths": {
-    "output_directory": "../../data",
-    "source_directory": "../../src",
-    "logs_directory": "../../logs",
-    "temp_directory": "../../.temp",
-    "images_directory": "../../data/leaves"
+    "output_directory": "data",
+    "source_directory": "src",
+    "logs_directory": "logs",
+    "temp_directory": ".temp",
+    "images_directory": "data/leaves"
   }
 }

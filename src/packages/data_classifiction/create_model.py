@@ -1,9 +1,6 @@
 import json
-import os
-import sys
 from typing import Tuple
 
-import click
 import tensorflow as tf
 from keras import Sequential
 from keras.src.callbacks import EarlyStopping
@@ -22,11 +19,6 @@ from keras.src.regularizers import L2
 from keras.src.saving.saving_api import save_model
 from keras.src.utils.image_dataset_utils import image_dataset_from_directory
 from matplotlib import pyplot as plt
-
-from src.packages.data_classifiction.utils.helper_functions import (
-    validate_source,
-    contains_jpgs,
-)
 
 
 def plot_training_metrics(history: tf.keras.callbacks.History, model_path: str) -> None:
@@ -211,28 +203,9 @@ def create_model(src_data) -> Sequential:
     return model
 
 
-def core_train(src: str) -> None:
-    if not os.path.isdir(src) or not contains_jpgs(src):
-        print("The provided path is not a valid directory.")
-        sys.exit(1)
+class ModelMaker:
+    def __init__(self, src_data: str):
+        self.src_data = src_data
 
-    src_name = os.path.basename(src)
-    output_zip = f'../data/{src_name}_augmented.zip'
-    augmented_dir = f'../data/{src_name}_augmented'
-    # augmentation(input_dir=packages, output_dir=augmented_dir)
-
-    model = create_model(augmented_dir)
-
-    # zip_directory(directory=augmented_dir, output_zip=output_zip)
-
-
-@click.command()
-@click.option('--packages', required=True, help='Source directory.',
-              callback=validate_source)
-def cli_train(src: str) -> None:
-    core_train(src)
-
-
-if __name__ == '__main__':
-    src_dir = "../leaves"
-    core_train(src_dir)
+    def create_model(self) -> Sequential:
+        return create_model(self.src_data)
