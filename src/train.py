@@ -25,7 +25,7 @@ def main(src: str = None) -> None:
         print("The provided path is not a valid directory.")
         sys.exit(1)
 
-    ModelMaker(src)
+    ModelMaker(src_data=src, model_name="model_v1")
 
 
 if __name__ == "__main__":
