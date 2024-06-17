@@ -17,7 +17,7 @@ logger = Logger("Augmentation").get_logger()
 
 
 @error_handling_decorator(handle_exceptions=(FileNotFoundError,))
-def main(input_dir: str = None, output_dir: str = None):
+def augment_images(input_dir: str = None, output_dir: str = None):
     """
     Perform data augmentation on a dataset.
 
@@ -31,18 +31,27 @@ def main(input_dir: str = None, output_dir: str = None):
     if input_dir is None and output_dir is None:
         parser = argparse.ArgumentParser()
         parser.add_argument(
-            "input_dir",
+            "--src", required=True,
             help="Path to the folder containing the input images"
         )
+        parser.add_argument(
+            "--dst", required=False,
+            help="Path to the folder to save the augmented images"
+        )
         args = parser.parse_args()
-        input_dir = args.input_dir
+        input_dir = args.src
+        output_dir = args.dst
 
     if os.path.isdir(input_dir):
         data_dir = find_data_directory(input_dir)
-        augmented_dir = config.output_dir / f"{os.path.basename(data_dir)}_augmented"
+        augmented_dir = (
+                output_dir
+                or config.output_dir / f"{os.path.basename(data_dir)}_aug"
+        )
         os.makedirs(augmented_dir, exist_ok=True)
-
         balance_dataset(data_dir, augmented_dir)
+        return augmented_dir
+
     elif os.path.isfile(input_dir):
         file_dir = os.path.dirname(input_dir)
         augmented_images = perform_augmentation(
@@ -57,4 +66,4 @@ def main(input_dir: str = None, output_dir: str = None):
 
 
 if __name__ == "__main__":
-    main()
+    augment_images()

@@ -1,4 +1,5 @@
 import os
+from typing import Tuple, Any
 
 import cv2
 import matplotlib.pyplot as plt
@@ -460,7 +461,7 @@ class Transformation:
             plt.savefig(os.path.join(
                 self.output_dir,
                 f"{self.image_name}_color_histogram.jpg"))
-        elif self.output_dir is None:
+        elif self.output_dir is None and not self.keep_dir_structure:
             plt.show()
         plt.close()
 
@@ -611,12 +612,32 @@ class Transformation:
                     f"{self.image_name}_{image_suffix}.jpg"
                 )
             )
-        elif self.output_dir is None:
+        elif self.output_dir is None and not self.keep_dir_structure:
             show_image(
                 image,
                 title=f"Image with {image_suffix.capitalize()}",
                 color=color
             )
+
+    @error_handling_decorator(handle_exceptions=(ValueError, RuntimeError))
+    @ensure_image_loaded
+    def get_images(self) -> dict[str, Any]:
+        """
+        Return the final images generated
+        during the image transformation workflow.
+
+        Returns:
+            dict: A dictionary containing the final images.
+        """
+        return {
+            "original": self.image,
+            "gaussian_blur": self.gaussian_blur,
+            "diseased": self.diseased_image,
+            "analyze_object": self.shape_image,
+            "roi_objects": self.boundary_image_h,
+            "pseudolandmarks": self.image_with_landmarks,
+            "masked": self.final_masked_image,
+        }
 
 
 if __name__ == "__main__":

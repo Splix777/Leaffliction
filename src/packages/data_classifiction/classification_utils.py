@@ -1,8 +1,12 @@
+import json
 import os
+import subprocess
 import zipfile
 
+from keras.src.saving import load_model
 
-def contains_jpgs(directory: str) -> bool:
+
+def contains_multiple_dirs_jpgs(directory: str) -> bool:
     """
     Check if the directory contains jpg files and at least two subdirectories
     with jpg files.
@@ -24,6 +28,22 @@ def contains_jpgs(directory: str) -> bool:
         if len(subdirectories_with_jpgs) >= 2:
             return True
     return False
+
+
+def contains_jpgs(directory: str) -> bool:
+    """
+    Check if the directory contains jpg files
+
+    Args:
+        directory (str): The path to the directory to check.
+
+    Returns:
+        bool: True if the directory contains jpg files
+    """
+    return any(
+        any(file.casefold().endswith('.jpg') for file in files)
+        for subdir, _, files in os.walk(directory)
+    )
 
 
 def count_image(directory: str) -> int:
@@ -48,3 +68,41 @@ def zip_directory(directory, output_zip):
         for root, _, files in os.walk(directory):
             for file in files:
                 zipf.write(str(os.path.join(root, file)))
+
+
+def compute_sha1(file_path):
+    result = subprocess.run(
+        ['sha1sum', file_path],
+        capture_output=True,
+        text=True
+    )
+    if result.returncode == 0:
+        return result.stdout.split()[0]
+    else:
+        raise RuntimeError(f"Failed to compute SHA1 hash for {file_path}")
+
+
+def extract_model_from_zip(zip_filename, model_name):
+    with zipfile.ZipFile(zip_filename, 'r') as zipf:
+        model_filename = f'{model_name}.keras'
+        if model_filename not in zipf.namelist():
+            raise FileNotFoundError(f"Model file '{model_filename}' "
+                                    f"not found in '{zip_filename}'")
+
+        with zipf.open(model_filename, 'r') as model_file:
+            model_bytes = model_file.read()
+
+        with open(model_filename, 'wb') as f:
+            f.write(model_bytes)
+
+        return load_model(model_filename)
+
+
+def extract_labels_from_zip(zip_filename, labels_filename):
+    with zipfile.ZipFile(zip_filename, 'r') as zipf:
+        if labels_filename not in zipf.namelist():
+            raise FileNotFoundError(f"Labels file '{labels_filename}' "
+                                    f"not found in '{zip_filename}'")
+
+        with zipf.open(labels_filename, 'r') as labels_file:
+            return json.load(labels_file)

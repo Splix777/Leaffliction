@@ -24,6 +24,7 @@ class Config:
         self.logs_dir = None
         self.temp_dir = None
         self.images_dir = None
+        self.root_dir = None
         if config_path is None:
             config_path = Path(__file__).parent / '../../../config.json'
         self.config_path = Path(config_path)
@@ -53,6 +54,7 @@ class Config:
         self.logs_dir = self.base_dir / self.paths['logs_directory']
         self.temp_dir = self.base_dir / self.paths['temp_directory']
         self.images_dir = self.base_dir / self.paths['images_directory']
+        self.root_dir = self.base_dir / self.paths['root_directory']
 
         # Ensure the necessary directories exist
         self.output_dir.mkdir(parents=True, exist_ok=True)

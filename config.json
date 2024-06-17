@@ -13,6 +13,7 @@
     "source_directory": "src",
     "logs_directory": "logs",
     "temp_directory": ".temp",
-    "images_directory": "data/leaves"
+    "images_directory": "data/leaves",
+    "root_directory": "."
   }
 }
