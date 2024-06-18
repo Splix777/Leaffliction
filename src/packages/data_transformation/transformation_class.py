@@ -1,5 +1,5 @@
 import os
-from typing import Tuple, Any
+from typing import Any
 
 import cv2
 import matplotlib.pyplot as plt
