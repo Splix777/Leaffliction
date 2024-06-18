@@ -12,8 +12,7 @@ logger = Logger("Transformation").get_logger()
 
 
 @error_handling_decorator(handle_exceptions=(FileNotFoundError,))
-def transformation(src: str = None, dst: None = None,
-                   keep_dir_structure: bool = False) -> None:
+def transformation(src: str = None, dst: None = None) -> None:
     """
      Perform the transformation based on the
      source and destination.
@@ -42,9 +41,13 @@ def transformation(src: str = None, dst: None = None,
         if dst is None:
             print("Please provide a destination directory.")
             sys.exit(1)
-        Transformation(input_dir=src, output_dir=dst)
+        Transformation(
+            input_dir=src,
+            output_dir=dst,
+            keep_dir_structure=True
+        )
     elif os.path.isfile(src):
-        Transformation(image_path=src)
+        Transformation(image_path=src, keep_dir_structure=False)
     else:
         logger.error(f"Invalid input file or directory: {src}")
         print(f"Invalid input file or directory: {src}")
@@ -52,6 +55,5 @@ def transformation(src: str = None, dst: None = None,
 
 
 if __name__ == '__main__':
-    #     image = config.images_dir / 'images/Apple_Black_rot/image\ \(1).JPG'
-    #     transformation(image)
+
     transformation()

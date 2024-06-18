@@ -33,7 +33,7 @@ def main(src: str = None) -> None:
         print("The provided path is not a valid directory.")
         sys.exit(1)
 
-    aug_dir = augment_images(input_dir=src)
+    aug_dir = augment_images(input_src=src)
     model = ModelMaker(src_data=aug_dir, model_name="model_v1")
     model.run()
 

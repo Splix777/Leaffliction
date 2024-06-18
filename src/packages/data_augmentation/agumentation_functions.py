@@ -48,7 +48,7 @@ def barrel_distortion(image: np.ndarray, k1: float = 0.3) -> np.ndarray:
     return cv2.undistort(src=image, cameraMatrix=K, distCoeffs=dist_coef)
 
 
-def pincushion_distortion(image: np.ndarray, k1: float = 0.3) -> np.ndarray:
+def pincushion_distortion(image: np.ndarray, k1: float = 0.5) -> np.ndarray:
     """
     Applies pincushion distortion to the input image. Make the image
     look as thought its being viewed through a telephoto lens.
@@ -65,7 +65,7 @@ def pincushion_distortion(image: np.ndarray, k1: float = 0.3) -> np.ndarray:
 
 @error_handling_decorator(handle_exceptions=(ValueError, cv2.error))
 def mustache_distortion(
-        image: np.ndarray, k1: float = 0.3, k2: float = 0.3
+        image: np.ndarray, k1: float = 0.8, k2: float = 0.8
 ) -> np.ndarray:
     """
     Applies mustache distortion to the input image. This distortion
@@ -455,7 +455,7 @@ def crop_image(image: np.ndarray, x1: int = 50, y1: int = 50, x2: int = 200,
 
 
 @error_handling_decorator(handle_exceptions=(ValueError, cv2.error))
-def apply_contrast(image: np.ndarray, alpha_range: tuple = (0.8, 1.2)
+def apply_contrast(image: np.ndarray, alpha_range: tuple = (1.0, 2.0)
                    ) -> np.ndarray:
     """
     Applies contrast adjustment to the input image with a

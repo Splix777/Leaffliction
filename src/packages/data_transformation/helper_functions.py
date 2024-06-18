@@ -1,4 +1,3 @@
-import logging
 import os
 
 import cv2
@@ -80,34 +79,3 @@ def count_images(directory: str) -> int:
         len([file for file in files if file.casefold().endswith("jpg")])
         for subdir, _, files in os.walk(directory)
     )
-
-
-def setup_logger(log_level=logging.DEBUG) -> logging.Logger:
-    """
-    Set up logging configuration.
-
-    Args:
-        log_level (int): Logging level (e.g., logging.DEBUG, logging.INFO).
-
-    Returns:
-        logging.Logger: The logger object.
-    """
-    # Create a logger
-    logger = logging.getLogger(__name__)
-    logger.setLevel(log_level)
-
-    # Create a file handler
-    log_file = os.path.join("logs", "transformation.log")
-    os.makedirs("logs", exist_ok=True)
-    file_handler = logging.FileHandler(log_file)
-    file_handler.setLevel(logging.DEBUG)
-
-    # Create a formatter and add it to the file handler
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(formatter)
-
-    # Add the file handler to the logger
-    logger.addHandler(file_handler)
-
-    return logger

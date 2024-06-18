@@ -210,11 +210,14 @@ def balance_dataset(input_directory: str, output_directory: str) -> None:
     for subdir, _, files in os.walk(input_directory):
         class_name = os.path.basename(subdir).lower()
         num_images = class_counts.get(class_name, 0)
+
         if num_images == 0:
             continue
+
         progress_bar = tqdm(
             total=(max_images - num_images), desc=str(class_name)
         )
+
         while num_images < max_images:
             for file in files:
                 if num_images >= max_images:

@@ -79,7 +79,7 @@ def predict_image(src: str, model, class_names: dict,
     pred_class = predicted_class_name.replace("_", " ").capitalize()
 
     if plot:
-        transformation = Transformation(image_path=src)
+        transformation = Transformation(image_path=src, keep_dir_structure=True)
         images = transformation.get_images()
 
         plot_predictions(
@@ -188,7 +188,7 @@ def evaluate_model(src: str, model: Sequential, batch_size: int) -> None:
 
 
 @error_handling_decorator(handle_exceptions=(FileNotFoundError,))
-def main(src: str = None, val_count: int = 0) -> None:
+def predict_images(src: str = None, val_count: int = 0) -> None:
     if src is None:
         parser = argparse.ArgumentParser()
         parser.add_argument("--src", required=True,
@@ -238,4 +238,4 @@ def main(src: str = None, val_count: int = 0) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    predict_images()

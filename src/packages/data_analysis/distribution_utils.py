@@ -48,6 +48,7 @@ def fetch_and_analyze_images(directory: str) -> dict[str, dict[str, int]]:
     return plant_types
 
 
+@error_handling_decorator()
 def generate_charts(plants_by_fruit: dict[str, dict[str, int]]):
     """
     Generates charts for each plant type and saves
@@ -85,5 +86,13 @@ def generate_charts(plants_by_fruit: dict[str, dict[str, int]]):
         plt.xticks(rotation=45, ha="right")
 
         plt.tight_layout()
-        plt.savefig(output_dir / f"{plant_name}_chart.png")
+        file_path = output_dir / f"{plant_name}_chart.png"
+        if os.path.exists(file_path):
+            response = input(
+                f'File {plant_name}_chart.png already exists. '
+                f'Do you want to overwrite it? (y/n): ')
+            if response.lower() != 'y':
+                plt.close()
+                return
+        plt.savefig(file_path)
         plt.close()

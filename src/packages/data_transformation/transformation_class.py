@@ -51,6 +51,7 @@ class Transformation:
         self.boundary_image_h = None
         self.shape_image = None
         self.image_with_landmarks = None
+        self.color_histogram = None
         # Image paths
         self.image_path = image_path
         self.input_dir = input_dir
@@ -457,11 +458,13 @@ class Transformation:
         plt.ylabel("Proportion of Pixels (%)")
         plt.legend()
         plt.tight_layout()
-        if self.output_dir is not None and not self.keep_dir_structure:
-            plt.savefig(os.path.join(
-                self.output_dir,
-                f"{self.image_name}_color_histogram.jpg"))
-        elif self.output_dir is None and not self.keep_dir_structure:
+
+        if self.output_dir is not None:
+            plt.savefig(
+                os.path.join(self.output_dir,
+                             f"{self.image_name}_histogram.jpg")
+            )
+        if not self.keep_dir_structure:
             plt.show()
         plt.close()
 
@@ -637,6 +640,7 @@ class Transformation:
             "roi_objects": self.boundary_image_h,
             "pseudolandmarks": self.image_with_landmarks,
             "masked": self.final_masked_image,
+            "histogram": self.color_histogram
         }
 
 

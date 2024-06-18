@@ -13,7 +13,7 @@ config = Config()
 logger = Logger("Distribution").get_logger()
 
 
-def main(directory: str = None):
+def create_data_distribution_plots(directory: str = None):
     """
     Main function to generate distribution charts
     for the plant types and their respective categories
@@ -31,11 +31,11 @@ def main(directory: str = None):
     if directory is None:
         parser = argparse.ArgumentParser()
         parser.add_argument(
-            "directory",
+            "--src", required=True,
             help="Path to the folder containing the image data"
         )
         args = parser.parse_args()
-        directory = args.directory
+        directory = args.src
 
     if not os.path.isdir(directory):
         print("The provided path is not a directory.")
@@ -43,8 +43,7 @@ def main(directory: str = None):
 
     plant_types = fetch_and_analyze_images(directory)
     generate_charts(plant_types)
-    logger.info("Distribution charts generated successfully.")
 
 
 if __name__ == "__main__":
-    main()
+    create_data_distribution_plots()

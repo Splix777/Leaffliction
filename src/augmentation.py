@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 
-from packages.data_augmentation.augmentation_workflow import (
+from packages.data_augmentation.augmentation_utils import (
     balance_dataset,
     find_data_directory,
     perform_augmentation
@@ -17,18 +17,18 @@ logger = Logger("Augmentation").get_logger()
 
 
 @error_handling_decorator(handle_exceptions=(FileNotFoundError,))
-def augment_images(input_dir: str = None, output_dir: str = None):
+def augment_images(input_src: str = None, output_dir: str = None):
     """
     Perform data augmentation on a dataset.
 
     Args:
-        input_dir: The directory containing the input images.
+        input_src: The directory containing the input images.
         output_dir: The directory to save the augmented images to.
 
     Returns:
         None
     """
-    if input_dir is None and output_dir is None:
+    if input_src is None and output_dir is None:
         parser = argparse.ArgumentParser()
         parser.add_argument(
             "--src", required=True,
@@ -39,11 +39,11 @@ def augment_images(input_dir: str = None, output_dir: str = None):
             help="Path to the folder to save the augmented images"
         )
         args = parser.parse_args()
-        input_dir = args.src
+        input_src = args.src
         output_dir = args.dst
 
-    if os.path.isdir(input_dir):
-        data_dir = find_data_directory(input_dir)
+    if os.path.isdir(input_src):
+        data_dir = find_data_directory(input_src)
         augmented_dir = (
                 output_dir
                 or config.output_dir / f"{os.path.basename(data_dir)}_aug"
@@ -52,16 +52,17 @@ def augment_images(input_dir: str = None, output_dir: str = None):
         balance_dataset(data_dir, augmented_dir)
         return augmented_dir
 
-    elif os.path.isfile(input_dir):
-        file_dir = os.path.dirname(input_dir)
-        augmented_images = perform_augmentation(
-            image_path=input_dir,
+    elif os.path.isfile(input_src):
+        file_dir = os.path.dirname(input_src)
+        perform_augmentation(
+            image_path=input_src,
             input_directory=file_dir,
             output_directory=config.temp_dir)
         subprocess.Popen(["open", config.temp_dir])
+
     else:
-        logger.error(f"Invalid input file or directory: {input_dir}")
-        print(f"Invalid input file or directory: {input_dir}")
+        logger.error(f"Invalid input file or directory: {input_src}")
+        print(f"Invalid input file or directory: {input_src}")
         sys.exit(1)
 
 
