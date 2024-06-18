@@ -201,27 +201,27 @@ this, we will transform the images to highlight the features in the images.
 
 <div align="center">
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_original.jpg" alt="Original" width="100%">
+        <img src="images/transformed_images/image(932)_original.jpg" alt="Original" width="13%">
         <div>Original</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_analyze_object.jpg" alt="Analyze Object" width="100%">
+        <img src="images/transformed_images/image(932)_analyze_object.jpg" alt="Analyze Object" width="13%">
         <div>Analyze Object</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_diseased.jpg" alt="Mask" width="100%">
+        <img src="images/transformed_images/image(932)_diseased.jpg" alt="Mask" width="13%">
         <div>Mask</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_gaussian_blur.jpg" alt="Gaussian Blur" width="100%">
+        <img src="images/transformed_images/image(932)_gaussian_blur.jpg" alt="Gaussian Blur" width="13%">
         <div>Gaussian Blur</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_pseudolandmarks.jpg" alt="Pseudolandmarks" width="100%">
+        <img src="images/transformed_images/image(932)_pseudolandmarks.jpg" alt="Pseudolandmarks" width="13%">
         <div>Pseudolandmarks</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_roi_objects.jpg" alt="Roi Ojbects" width="100%">
+        <img src="images/transformed_images/image(932)_roi_objects.jpg" alt="Roi Ojbects" width="13%">
         <div>Roi Ojbects</div>
     </div>
 </div>
