@@ -102,7 +102,6 @@ other directories to match the number of images in the directory with the most
 images. Additionally, you can specify the number of images you want to augment.
 
 <div align="center">
-    <!-- First Row -->
     <div style="display: inline-block; text-align: center; width: 20%;">
         <img src="images/augmented_images/image(1)_Original.JPG" alt="Original" width="100%">
         <div>Original</div>
@@ -112,31 +111,31 @@ images. Additionally, you can specify the number of images you want to augment.
 <div align="center">
     <!-- First Row -->
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="100%">
+        <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="13%">
         <div>Affine</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="100%">
+        <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="13%">
         <div>Barrel</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="100%">
+        <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="13%">
         <div>Contrast</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="100%">
+        <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="13%">
         <div>Crop</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="100%">
+        <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="13%">
         <div>Distortion</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="100%">
+        <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="13%">
         <div>Flip</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="100%">
+        <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="13%">
         <div>Jitter</div>
     </div>
 </div>
@@ -146,31 +145,31 @@ images. Additionally, you can specify the number of images you want to augment.
 <div align="center">
     <!-- Second Row -->
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Mustache.JPG" alt="Mustache" width="100%">
+        <img src="images/augmented_images/image(1)_Mustache.JPG" alt="Mustache" width="13%">
         <div>Mustache</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Noise.JPG" alt="Noise" width="100%">
+        <img src="images/augmented_images/image(1)_Noise.JPG" alt="Noise" width="13%">
         <div>Noise</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Pincushion.JPG" alt="Pincushion" width="100%">
+        <img src="images/augmented_images/image(1)_Pincushion.JPG" alt="Pincushion" width="13%">
         <div>Pincushion</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Projective.JPG" alt="Projective" width="100%">
+        <img src="images/augmented_images/image(1)_Projective.JPG" alt="Projective" width="13%">
         <div>Projective</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Rotate.JPG" alt="Rotate" width="100%">
+        <img src="images/augmented_images/image(1)_Rotate.JPG" alt="Rotate" width="13%">
         <div>Rotate</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Shear.JPG" alt="Shear" width="100%">
+        <img src="images/augmented_images/image(1)_Shear.JPG" alt="Shear" width="13%">
         <div>Shear</div>
     </div>
     <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Skew.JPG" alt="Skew" width="100%">
+        <img src="images/augmented_images/image(1)_Skew.JPG" alt="Skew" width="13%">
         <div>Skew</div>
     </div>
 </div>
