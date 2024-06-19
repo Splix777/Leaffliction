@@ -217,7 +217,6 @@ def predict_images(src: str = None, val_count: int = 0) -> None:
     if os.path.isfile(zip_filename):
         model = extract_model_from_zip(zip_filename, 'model_v1')
         labels = extract_labels_from_zip(zip_filename, 'labels.json')
-        print(model.summary())
 
         if os.path.isfile(src):
             predict_image(
