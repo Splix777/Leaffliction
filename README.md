@@ -108,37 +108,36 @@ images. Additionally, you can specify the number of images you want to augment.
     </div>
 </div>
 
-<div align="center">
-    <!-- First Row -->
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="13%">
-        <div>Affine</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="13%">
-        <div>Barrel</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="13%">
-        <div>Contrast</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="13%">
-        <div>Crop</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="13%">
-        <div>Distortion</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="13%">
-        <div>Flip</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="13%">
-        <div>Jitter</div>
-    </div>
+<!-- First Row -->
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="13%">
+    <div>Affine</div>
 </div>
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="13%">
+    <div>Barrel</div>
+</div>
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="13%">
+    <div>Contrast</div>
+</div>
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="13%">
+    <div>Crop</div>
+</div>
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="13%">
+    <div>Distortion</div>
+</div>
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="13%">
+    <div>Flip</div>
+</div>
+<div style="display: inline-block; text-align: center; width: 13%;">
+    <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="13%">
+    <div>Jitter</div>
+</div>
+
 
 -------------------
 
