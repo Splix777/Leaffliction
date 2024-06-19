@@ -109,36 +109,37 @@ images. Additionally, you can specify the number of images you want to augment.
     </div>
 </div>
 
-<p align="center">
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="100" />
-        <figcaption>Affine</figcaption>
-    </figure>
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="100" />
-        <figcaption>Barrel</figcaption>
-    </figure>
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="100" />
-        <figcaption>Contrast</figcaption>
-    </figure>
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="100" />
-        <figcaption>Crop</figcaption>
-    </figure>
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="100" />
-        <figcaption>Distortion</figcaption>
-    </figure>
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="100" />
-        <figcaption>Flip</figcaption>
-    </figure>
-    <figure style="display:inline-block;">
-        <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="100" />
-        <figcaption>Jitter</figcaption>
-    </figure>
-</p>
+<div align="center">
+    <!-- First Row -->
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="100%">
+        <div>Affine</div>
+    </div>
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="100%">
+        <div>Barrel</div>
+    </div>
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="100%">
+        <div>Contrast</div>
+    </div>
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="100%">
+        <div>Crop</div>
+    </div>
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="100%">
+        <div>Distortion</div>
+    </div>
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="100%">
+        <div>Flip</div>
+    </div>
+    <div style="display: inline-block; text-align: center; width: 13%;">
+        <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="100%">
+        <div>Jitter</div>
+    </div>
+</div>
 
 -------------------
 
