@@ -103,75 +103,11 @@ images. Additionally, you can specify the number of images you want to augment.
 
 <div align="center">
     <div style="display: inline-block; text-align: center; width: 20%;">
-        <img src="images/augmented_images/image(1)_Original.JPG" alt="Original" width="100%">
-        <div>Original</div>
+        <img src="images/augmented_gif.gif" alt="Original" width="100%">
+        <div>Augmented Images created from a single image.</div>
     </div>
 </div>
 
-<!-- First Row -->
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Affine.JPG" alt="Affine" width="13%">
-    <div>Affine</div>
-</div>
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Barrel.JPG" alt="Barrel" width="13%">
-    <div>Barrel</div>
-</div>
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Contrast.JPG" alt="Contrast" width="13%">
-    <div>Contrast</div>
-</div>
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Crop.JPG" alt="Crop" width="13%">
-    <div>Crop</div>
-</div>
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Distortion.JPG" alt="Distortion" width="13%">
-    <div>Distortion</div>
-</div>
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Flip.JPG" alt="Flip" width="13%">
-    <div>Flip</div>
-</div>
-<div style="display: inline-block; text-align: center; width: 13%;">
-    <img src="images/augmented_images/image(1)_Jitter.JPG" alt="Jitter" width="13%">
-    <div>Jitter</div>
-</div>
-
-
--------------------
-
-<div align="center">
-    <!-- Second Row -->
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Mustache.JPG" alt="Mustache" width="13%">
-        <div>Mustache</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Noise.JPG" alt="Noise" width="13%">
-        <div>Noise</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Pincushion.JPG" alt="Pincushion" width="13%">
-        <div>Pincushion</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Projective.JPG" alt="Projective" width="13%">
-        <div>Projective</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Rotate.JPG" alt="Rotate" width="13%">
-        <div>Rotate</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Shear.JPG" alt="Shear" width="13%">
-        <div>Shear</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/augmented_images/image(1)_Skew.JPG" alt="Skew" width="13%">
-        <div>Skew</div>
-    </div>
-</div>
 
 Above, you can see an example of an image going through different augmentation
 techniques. The original image is top and center, and below are the augmented
@@ -198,40 +134,19 @@ Next, we want to better understand the images in the data set. To achieve
 this, we will transform the images to highlight the features in the images.
 
 <div align="center">
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_original.jpg" alt="Original" width="13%">
-        <div>Original</div>
+    <div style="display: inline-block; text-align: center; width: 20%;">
+        <img src="images/transformed_gif.gif" alt="Transformed" width="100%">
+        <div>Transformed Images created from a single image.</div>
     </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_analyze_object.jpg" alt="Analyze Object" width="13%">
-        <div>Analyze Object</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_diseased.jpg" alt="Mask" width="13%">
-        <div>Mask</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_gaussian_blur.jpg" alt="Gaussian Blur" width="13%">
-        <div>Gaussian Blur</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_pseudolandmarks.jpg" alt="Pseudolandmarks" width="13%">
-        <div>Pseudolandmarks</div>
-    </div>
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <img src="images/transformed_images/image(932)_roi_objects.jpg" alt="Roi Ojbects" width="13%">
-        <div>Roi Ojbects</div>
+</div>
+<div align="center">
+    <div style="display: inline-block; text-align: center; width: 20%;">
+        <img src="images/transformed_histogram.png" alt="Histogram" width="100%">
+        <div>Transformed Image Histogram</div>
     </div>
 </div>
 
-<div align="center">
-    <div style="display: inline-block; text-align: center; width: 13%;">
-        <div align="center">
-            <img src="images/transformed_images/Figure_1.png" alt="Color Histogram" width="50%">
-        <div>Color Histogram</div>
-        </div>
-    </div>  
-</div>
+
 
 
 -------------------
