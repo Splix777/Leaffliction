@@ -1,4 +1,5 @@
 <h1 align="center">Leafflection</h1>
+[![Super-Linter](https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/<WORKFLOW_FILE_NAME>/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 <div align="center">
 <img src="images/tree.png" alt="Harry Potter" width="35%">
